@@ -1,0 +1,24 @@
+image:
+  pullPolicy: Always
+
+# deploys Job instead of CronJob
+test:
+  enabled: true
+
+cronjob:
+  repository: registry.cern.ch/cmsmonitoring/cmsmon-hdfs:v0.3.6
+  crons:
+    "0":
+      name: cmsmon-rucio-daily
+      schedule: "07 08 * * *"
+      command: /data/CMSSpark/bin/cron4rucio_daily.sh
+      args: |-
+        --keytab /etc/secrets/keytab --output /tmp/kmeliush
+    "1":
+      name: cmsmon-crab-pop
+      eosEnabled: true
+      testFlagExists: true
+      schedule: "30 20 04 * *"
+      command: /data/CMSSpark/bin/cron4crab_popularity.sh
+      args: |-
+        --keytab /etc/secrets/keytab --output /eos/user/k/kmeliush/crabPop/data
